@@ -26,31 +26,34 @@ public class UserPrincipal implements UserDetails {
 
     @JsonIgnore
     private String password;
+    
+    @JsonIgnore
+    private Boolean isActive;
 
     private Collection<? extends GrantedAuthority> authorities;
 
-    public UserPrincipal(Long id, String firstName, String lastName, String email, String password, Collection<? extends GrantedAuthority> authorities) {
+    public UserPrincipal(Long id, String firstName, String lastName, String email, String password, Collection<? extends GrantedAuthority> authorities, Boolean isActive) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
         this.authorities = authorities;
+        this.isActive = isActive;
     }
 
     public static UserPrincipal create(User user) {
         List<GrantedAuthority> authorities = Arrays.asList(
                 new SimpleGrantedAuthority(user.getRole().getName().name()));
 
-        //List<GrantedAuthority> authorities = Arrays.asList(new SimpleGrantedAuthority("ROLE_USER"));
-        
         return new UserPrincipal(
                 user.getId(),
                 user.getFirstName(),
                 user.getLastName(),
                 user.getEmail(),
                 user.getPassword(),
-                authorities
+                authorities,
+                user.getIsActive()
         );
     }
 
@@ -98,20 +101,6 @@ public class UserPrincipal implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return isActive;
     }
-
-//    @Override
-//    public boolean equals(Object o) {
-//        if (this == o) return true;
-//        if (o == null || getClass() != o.getClass()) return false;
-//        UserPrincipal that = (UserPrincipal) o;
-//        return Objects.equals(id, that.id);
-//    }
-//
-//    @Override
-//    public int hashCode() {
-//
-//        return Objects.hash(id);
-//    }
 }

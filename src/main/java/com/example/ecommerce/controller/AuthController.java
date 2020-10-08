@@ -1,7 +1,6 @@
 package com.example.ecommerce.controller;
 
-import java.net.URI;
-import java.util.Collections;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,39 +9,34 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import javax.validation.Valid;
-
+import com.example.ecommerce.dto.ErrorDTO;
 import com.example.ecommerce.dto.JwtAuthenticationResponseDTO;
 import com.example.ecommerce.dto.LoginDTO;
-import com.example.ecommerce.model.User;
+import com.example.ecommerce.dto.UserDTO;
 import com.example.ecommerce.repository.UserRepository;
 import com.example.ecommerce.security.JwtTokenProvider;
+import com.example.ecommerce.service.UserService;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/auth")
 public class AuthController {
 
     @Autowired
-    AuthenticationManager authenticationManager;
+    private AuthenticationManager authenticationManager;
 
     @Autowired
-    UserRepository userRepository;
-
-//    @Autowired
-//    RoleRepository roleRepository;
+    private UserRepository userRepository;
 
     @Autowired
-    PasswordEncoder passwordEncoder;
-
+    private JwtTokenProvider tokenProvider;
+    
     @Autowired
-    JwtTokenProvider tokenProvider;
+    private UserService userService;
 
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginDTO loginRequest) {
@@ -60,35 +54,15 @@ public class AuthController {
         return ResponseEntity.ok(new JwtAuthenticationResponseDTO(jwt));
     }
 
-//    @PostMapping("/signup")
-//    public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
-//        if(userRepository.existsByUsername(signUpRequest.getUsername())) {
-//            return new ResponseEntity(new ApiResponse(false, "Username is already taken!"),
-//                    HttpStatus.BAD_REQUEST);
-//        }
-//
-//        if(userRepository.existsByEmail(signUpRequest.getEmail())) {
-//            return new ResponseEntity(new ApiResponse(false, "Email Address already in use!"),
-//                    HttpStatus.BAD_REQUEST);
-//        }
-//
-//        // Creating user's account
-//        User user = new User(signUpRequest.getName(), signUpRequest.getUsername(),
-//                signUpRequest.getEmail(), signUpRequest.getPassword());
-//
-//        user.setPassword(passwordEncoder.encode(user.getPassword()));
-//
-//        Role userRole = roleRepository.findByName(RoleName.ROLE_USER)
-//                .orElseThrow(() -> new AppException("User Role not set."));
-//
-//        user.setRoles(Collections.singleton(userRole));
-//
-//        User result = userRepository.save(user);
-//
-//        URI location = ServletUriComponentsBuilder
-//                .fromCurrentContextPath().path("/users/{username}")
-//                .buildAndExpand(result.getUsername()).toUri();
-//
-//        return ResponseEntity.created(location).body(new ApiResponse(true, "User registered successfully"));
-//    }
+    @PostMapping("/signup")
+    public ResponseEntity<Object> registerUser(@RequestBody @Valid UserDTO userDTO) throws Exception {
+
+        if(userRepository.existsByEmail(userDTO.getEmail())) {
+            return new ResponseEntity<>(new ErrorDTO("Bad Request", "Email Address already in use!"),
+                    HttpStatus.BAD_REQUEST);
+        }
+
+        // Creating user's account
+        return userService.addUser(userDTO);
+    }
 }

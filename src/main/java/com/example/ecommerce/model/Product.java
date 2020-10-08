@@ -13,7 +13,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "products")
+@Table(name = "product")
 @Getter
 @Setter
 public class Product extends DateAudit{
@@ -24,15 +24,15 @@ public class Product extends DateAudit{
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	@Column(name = "name", length = 100)
+	@Column(name = "name", length = 100, nullable = false)
 	private String name;
 	
-	@Column(name = "description", length = 100)
+	@Column(name = "description", length = 500, nullable = false)
 	private String description;
 	
-	@Column(name = "price")
+	@Column(name = "price", nullable = false)
 	private Float price;
 	
-	@Column(name = "is_active")
-	private Boolean isActive;
+	@Column(name = "is_active", nullable = false)
+	private Boolean isActive = true;
 }

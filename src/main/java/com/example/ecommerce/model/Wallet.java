@@ -30,6 +30,6 @@ public class Wallet extends DateAudit{
 	private Float amount;
 	
 	@OneToOne
-	@JoinColumn(name = "user_id")
+	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
 }

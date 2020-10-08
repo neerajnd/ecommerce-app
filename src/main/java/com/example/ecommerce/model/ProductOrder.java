@@ -27,13 +27,13 @@ public class ProductOrder extends DateAudit{
 	private Long id;
 	
 	@ManyToOne
-	@JoinColumn(name = "product_id")
+	@JoinColumn(name = "product_id", nullable = false)
 	private Product product;
 	
 	@ManyToOne
-	@JoinColumn(name = "order_id")
+	@JoinColumn(name = "order_id", nullable = false)
 	private Order order;
 	
-	@Column(name = "product_price")
+	@Column(name = "product_price", nullable = false)
 	private Float productPrice;
 }

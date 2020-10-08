@@ -1,8 +1,10 @@
 package com.example.ecommerce.service;
 
+import java.net.URI;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,39 +24,69 @@ public class UserService {
 
 	@Autowired
 	private UserRepository userRepository;
-	
+
 	@Autowired
 	private PasswordEncoder passwordEncoder;
-	
+
 	@Autowired
 	private RoleRepository roleRepository;
-	
+
 	@Autowired
 	private WalletRepository walletRepository;
-	
-	public void addUser(UserDTO userDTO) {
-		
+
+	public ResponseEntity<Object> addUser(UserDTO userDTO) throws Exception {
+
 		Role role = roleRepository.findByName(RoleName.ROLE_USER);
-		User user = new User(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail(), passwordEncoder.encode(userDTO.getPassword()), role);
+		User user = new User(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail(),
+				passwordEncoder.encode(userDTO.getPassword()), role);
 		userRepository.save(user);
 		Wallet wallet = new Wallet();
 		wallet.setUser(user);
 		wallet.setAmount(0f);
 		walletRepository.save(wallet);
+
+		return ResponseEntity.created(new URI("/users/" + user.getId())).build();
 	}
-	
-	public UserDTO getUser(Long userId) {
+
+	public ResponseEntity<UserDTO> getUser(Long userId) {
 		Optional<User> userOptional = userRepository.findById(userId);
-		if(!userOptional.isPresent()) {
-			//not found
+		if (!userOptional.isPresent()) {
+			return ResponseEntity.notFound().build();
 		}
-		
+
 		User user = userOptional.get();
 		UserDTO userDTO = new UserDTO();
 		prepareUserDTO(user, userDTO);
-		return userDTO;
+		return ResponseEntity.ok(userDTO);
 	}
-	
+
+	public ResponseEntity<Object> updateUser(Long userId, UserDTO userDTO) {
+
+		Optional<User> userOptional = userRepository.findById(userId);
+		if (!userOptional.isPresent()) {
+			return ResponseEntity.notFound().build();
+		}
+		User user = userOptional.get();
+		user.setFirstName(userDTO.getFirstName());
+		user.setLastName(userDTO.getLastName());
+
+		userRepository.save(user);
+		return ResponseEntity.noContent().build();
+	}
+
+	public ResponseEntity<Object> deleteUser(Long userId) {
+
+		Optional<User> userOptional = userRepository.findById(userId);
+		if (!userOptional.isPresent()) {
+			return ResponseEntity.notFound().build();
+		}
+		User user = userOptional.get();
+		user.setIsActive(false);
+
+		userRepository.save(user);
+		return ResponseEntity.noContent().build();
+	}
+
 	private void prepareUserDTO(User user, UserDTO userDTO) {
 		userDTO.setId(user.getId());
 		userDTO.setEmail(user.getEmail());

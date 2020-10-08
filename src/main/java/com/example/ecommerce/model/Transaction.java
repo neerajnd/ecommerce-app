@@ -17,26 +17,26 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "transactions")
+@Table(name = "transaction")
 @Getter
 @Setter
-public class Transactions {
+public class Transaction {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	@Column(name = "amount")
+	@Column(name = "amount", nullable = false)
 	private Float amount;
 	
 	@OneToOne
-	@JoinColumn(name = "user_id")
+	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
 	
 	@Enumerated(EnumType.STRING)
-	@Column(name = "type", length = 50)
+	@Column(name = "type", length = 50, nullable = false)
     private TransactionType transactionType;
 	
-	@Column(name = "timestamp")
-	private Instant timestamp;
+	@Column(name = "transaction_time", nullable = false)
+	private Instant transactionTime;
 }
