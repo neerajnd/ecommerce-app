@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+import com.example.ecommerce.dto.ApiResponseDTO;
+
 @RestController
 @RequestMapping("/employees")
 public class EmployeeController {
@@ -26,6 +28,6 @@ public class EmployeeController {
 		catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
-		return response.getBody();
+		return new ApiResponseDTO(true, response.getBody());
 	}
 }

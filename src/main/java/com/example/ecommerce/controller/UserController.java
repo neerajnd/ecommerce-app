@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.ecommerce.dto.ApiResponseDTO;
 import com.example.ecommerce.dto.UserDTO;
 import com.example.ecommerce.security.UserPrincipal;
 import com.example.ecommerce.service.UserService;
@@ -23,7 +24,7 @@ public class UserController {
 	
 	@GetMapping("/users/{id}")
 	@Secured("ROLE_ADMIN")
-	public ResponseEntity<UserDTO> getUser(@PathVariable Long id) {
+	public ResponseEntity<ApiResponseDTO> getUser(@PathVariable Long id) {
 		
 		return userService.getUser(id);
 	}
@@ -52,7 +53,7 @@ public class UserController {
 	
 	@GetMapping("/user")
 	@Secured({"ROLE_USER", "ROLE_ADMIN"})
-	public ResponseEntity<UserDTO> getLoggedInUser(Authentication authentication) {
+	public ResponseEntity<ApiResponseDTO> getLoggedInUser(Authentication authentication) {
 		
 		UserPrincipal userPrincipal = (UserPrincipal)authentication.getPrincipal();
 		return userService.getUser(userPrincipal.getId());

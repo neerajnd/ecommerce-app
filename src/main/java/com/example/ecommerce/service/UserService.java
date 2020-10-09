@@ -9,6 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.ecommerce.dto.ApiResponseDTO;
 import com.example.ecommerce.dto.UserDTO;
 import com.example.ecommerce.model.Role;
 import com.example.ecommerce.model.RoleName;
@@ -48,7 +49,7 @@ public class UserService {
 		return ResponseEntity.created(new URI("/users/" + user.getId())).build();
 	}
 
-	public ResponseEntity<UserDTO> getUser(Long userId) {
+	public ResponseEntity<ApiResponseDTO> getUser(Long userId) {
 		Optional<User> userOptional = userRepository.findById(userId);
 		if (!userOptional.isPresent()) {
 			return ResponseEntity.notFound().build();
@@ -57,7 +58,7 @@ public class UserService {
 		User user = userOptional.get();
 		UserDTO userDTO = new UserDTO();
 		prepareUserDTO(user, userDTO);
-		return ResponseEntity.ok(userDTO);
+		return ResponseEntity.ok(new ApiResponseDTO(true, userDTO));
 	}
 
 	public ResponseEntity<Object> updateUser(Long userId, UserDTO userDTO) {

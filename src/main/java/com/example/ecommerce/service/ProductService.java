@@ -5,16 +5,17 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.example.ecommerce.dto.ErrorDTO;
+import com.example.ecommerce.dto.ApiResponseDTO;
 import com.example.ecommerce.dto.ProductDTO;
 import com.example.ecommerce.model.Product;
 import com.example.ecommerce.repository.ProductRepository;
 
 @Service
+@Transactional
 public class ProductService {
 
 	@Autowired
@@ -42,7 +43,7 @@ public class ProductService {
 		return ResponseEntity.noContent().build();
 	}
 
-	public ResponseEntity<ProductDTO> getProductDetails(Long productId) {
+	public ResponseEntity<ApiResponseDTO> getProductDetails(Long productId) {
 		Optional<Product> productOptional = productsRepository.findById(productId);
 		if (!productOptional.isPresent()) {
 			return ResponseEntity.notFound().build();
@@ -51,7 +52,7 @@ public class ProductService {
 		ProductDTO productDTO = new ProductDTO();
 		prepareProductDTO(product, productDTO);
 
-		return ResponseEntity.ok(productDTO);
+		return ResponseEntity.ok(new ApiResponseDTO(true, productDTO));
 	}
 
 	public ResponseEntity<Object> deleteProduct(Long productId) {
@@ -67,7 +68,7 @@ public class ProductService {
 		return ResponseEntity.noContent().build();
 	}
 
-	public ResponseEntity<List<ProductDTO>> getAllProducts() {
+	public ResponseEntity<ApiResponseDTO> getAllProducts() {
 		List<Product> products = productsRepository.findByIsActive(true);
 
 		List<ProductDTO> productDTOs = products.stream().map(product -> {
@@ -76,7 +77,7 @@ public class ProductService {
 			return productDTO;
 		}).collect(Collectors.toList());
 
-		return ResponseEntity.ok(productDTOs);
+		return ResponseEntity.ok(new ApiResponseDTO(true, productDTOs));
 	}
 
 	private void prepareProduct(Product product, ProductDTO productDTO) {

@@ -1,7 +1,5 @@
 package com.example.ecommerce.controller;
 
-import java.util.List;
-
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.ecommerce.dto.ApiResponseDTO;
 import com.example.ecommerce.dto.ProductDTO;
 import com.example.ecommerce.service.ProductService;
 
@@ -34,8 +33,7 @@ public class ProductController {
 	}
 	
 	@GetMapping("/{id}")
-	@Secured({"ROLE_USER", "ROLE_ADMIN"})
-	public ResponseEntity<ProductDTO> getProductDetails(@PathVariable Long id) {
+	public ResponseEntity<ApiResponseDTO> getProductDetails(@PathVariable Long id) {
 		
 		return productsService.getProductDetails(id);
 	}
@@ -55,8 +53,7 @@ public class ProductController {
 	}
 	
 	@GetMapping("")
-	@Secured({"ROLE_USER", "ROLE_ADMIN"})
-	public ResponseEntity<List<ProductDTO>> getAllProducts() {
+	public ResponseEntity<ApiResponseDTO> getAllProducts() {
 		
 		return productsService.getAllProducts();
 	}

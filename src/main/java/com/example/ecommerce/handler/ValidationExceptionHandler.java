@@ -29,4 +29,13 @@ public class ValidationExceptionHandler {
 		
 		return new ResponseEntity<ErrorDTO>(new ErrorDTO(HttpStatus.BAD_REQUEST.getReasonPhrase(), message), HttpStatus.BAD_REQUEST);
 	}
+	
+	@ExceptionHandler(value = { RuntimeException.class })
+	public ResponseEntity<ErrorDTO> handleServerException(RuntimeException ex, WebRequest request) {
+		
+		String message = ex.getMessage();
+		System.out.println("caught exception : "+message);
+		
+		return new ResponseEntity<ErrorDTO>(new ErrorDTO(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), "Something went wrong"), HttpStatus.BAD_REQUEST);
+	}
 }

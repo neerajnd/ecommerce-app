@@ -15,6 +15,6 @@ import lombok.Setter;
 public class TopUpDTO {
 
 	@NotNull(message = "Please enter a valid amount greater than 0")
-	@Min(value = 0, message = "Topup amount must be greater than 0")
+	@Min(value = 1, message = "Topup amount must be greater than or equal to 1")
 	private Float amount;
 }

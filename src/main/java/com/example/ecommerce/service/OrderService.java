@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.ecommerce.dto.ApiResponseDTO;
 import com.example.ecommerce.dto.ErrorDTO;
 import com.example.ecommerce.dto.OrderDTO;
 import com.example.ecommerce.dto.ProductDTO;
@@ -94,7 +95,7 @@ public class OrderService {
 		return ResponseEntity.created(null).body(null);
 	}
 
-	public ResponseEntity<PurchaseReportDTO> getOrders(Long userId, Date fromDate, Date toDate) {
+	public ResponseEntity<ApiResponseDTO> getOrders(Long userId, Date fromDate, Date toDate) {
 		List<ProductDetail> products = orderRepository.getOrdersBetweenDates(userId, fromDate, toDate);
 		PurchaseReportDTO purchaseReportDTO = new PurchaseReportDTO();
 		
@@ -119,7 +120,7 @@ public class OrderService {
 
 		purchaseReportDTO.setProducts(productDTOs);
 		purchaseReportDTO.setTotalAmount(totalPriceOfAllOrders);
-		return ResponseEntity.ok(purchaseReportDTO);
+		return ResponseEntity.ok(new ApiResponseDTO(true, purchaseReportDTO));
 	}
 	
 	private Order saveOrderDetails(User user, Float totalPrice, Coupon coupon) {
